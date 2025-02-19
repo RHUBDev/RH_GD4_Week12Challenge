@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f6adf88f4d8f64fcc9cc4a61a7def39b
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 83163
+  packageName: City Pack - Modular and Tileable
+  packageVersion: 1.2
+  assetPath: Assets/Modular City Pack/Prefabs/PropsWithColliders/MC_Street_Lamp_Small.prefab
+  uploadId: 553490

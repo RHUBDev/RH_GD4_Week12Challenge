@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5caddeb6eb8f248f8bd17e400e6ba643
+timeCreated: 1486394937
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 83163
+  packageName: City Pack - Modular and Tileable
+  packageVersion: 1.2
+  assetPath: Assets/Modular City Pack/Materials/MC_Building_B_diffuse.mat
+  uploadId: 553490

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4b9561abb7cea465b9daffeaff15178c
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 83163
+  packageName: City Pack - Modular and Tileable
+  packageVersion: 1.2
+  assetPath: Assets/Modular City Pack/Prefabs/PropsWithColliders/MC_Bench.prefab
+  uploadId: 553490

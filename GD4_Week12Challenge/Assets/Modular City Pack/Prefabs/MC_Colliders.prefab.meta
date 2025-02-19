@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 7244948e5dddd4646801012432087212
+timeCreated: 1498815720
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 83163
+  packageName: City Pack - Modular and Tileable
+  packageVersion: 1.2
+  assetPath: Assets/Modular City Pack/Prefabs/MC_Colliders.prefab
+  uploadId: 553490
