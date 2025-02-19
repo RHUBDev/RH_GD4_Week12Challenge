@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 8b46e9d4c463dd04681eaac5b18375c6
+timeCreated: 1562099802
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102870
+  packageName: Realistic Hands - animated for VR
+  packageVersion: 2.0
+  assetPath: Assets/Realistic Hands - animated for VR/Realistic Hands - animated
+    for VR/models/Materials/hand_03_hand_skin_AlbedoTransparency.mat
+  uploadId: 617736

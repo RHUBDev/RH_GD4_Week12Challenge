@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: f0c70ac1e917f394282ae0e78c4b7bef
+timeCreated: 1508339334
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102870
+  packageName: Realistic Hands - animated for VR
+  packageVersion: 2.0
+  assetPath: Assets/Realistic Hands - animated for VR/Realistic Hands - animated
+    for VR/models/Materials/hand_blue.mat
+  uploadId: 617736

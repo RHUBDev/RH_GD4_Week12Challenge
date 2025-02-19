@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: d285d7ab8f51dd84d81e954b47716ca7
+timeCreated: 1508416223
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102870
+  packageName: Realistic Hands - animated for VR
+  packageVersion: 2.0
+  assetPath: Assets/Realistic Hands - animated for VR/Realistic Hands - animated
+    for VR/models/Materials/hand_scifi_1.mat
+  uploadId: 617736

@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 2ba6889d6f3347d47ad257dc45188b89
+timeCreated: 1561632833
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102870
+  packageName: Realistic Hands - animated for VR
+  packageVersion: 2.0
+  assetPath: Assets/Realistic Hands - animated for VR/Realistic Hands - animated
+    for VR/models/prefab/Axe.prefab
+  uploadId: 617736

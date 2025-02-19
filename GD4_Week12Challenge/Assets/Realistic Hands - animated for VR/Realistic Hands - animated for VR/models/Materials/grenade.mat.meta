@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 446d8a795ed93c84fabddf04b6a6f195
+timeCreated: 1561637849
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102870
+  packageName: Realistic Hands - animated for VR
+  packageVersion: 2.0
+  assetPath: Assets/Realistic Hands - animated for VR/Realistic Hands - animated
+    for VR/models/Materials/grenade.mat
+  uploadId: 617736

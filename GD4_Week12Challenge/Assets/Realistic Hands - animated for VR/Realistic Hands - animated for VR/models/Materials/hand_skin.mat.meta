@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 00ee4657b32b9e640a9848ae1472f5ed
+timeCreated: 1508416223
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102870
+  packageName: Realistic Hands - animated for VR
+  packageVersion: 2.0
+  assetPath: Assets/Realistic Hands - animated for VR/Realistic Hands - animated
+    for VR/models/Materials/hand_skin.mat
+  uploadId: 617736

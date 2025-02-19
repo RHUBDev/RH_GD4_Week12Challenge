@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 2633a85900046ff4d9d313b683584784
+timeCreated: 1561637898
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102870
+  packageName: Realistic Hands - animated for VR
+  packageVersion: 2.0
+  assetPath: Assets/Realistic Hands - animated for VR/Realistic Hands - animated
+    for VR/models/prefab/grenade.prefab
+  uploadId: 617736

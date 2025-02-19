@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 616edd5a5f1d4544198060576fdf92b6
+timeCreated: 1508416546
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 102870
+  packageName: Realistic Hands - animated for VR
+  packageVersion: 2.0
+  assetPath: Assets/Realistic Hands - animated for VR/Realistic Hands - animated
+    for VR/models/prefab/sphere.prefab
+  uploadId: 617736
