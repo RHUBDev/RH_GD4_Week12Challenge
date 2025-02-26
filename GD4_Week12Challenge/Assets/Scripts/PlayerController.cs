@@ -480,6 +480,8 @@ public class PlayerController : MonoBehaviour
                 {
                     gravity = 0;
 
+                    currentCollision = null;
+
                     if (extraMovement != Vector3.zero)
                     {
                         extraStopTimer += Time.deltaTime / extraStopTime;
