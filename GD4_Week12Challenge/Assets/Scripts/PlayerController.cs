@@ -7,6 +7,7 @@ using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using Unity.VisualScripting;
+using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour
 {
@@ -68,7 +69,20 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private SkinnedMeshRenderer mesh;
     private bool grounded2 = false;
     private Vector3 webpos2 = Vector3.zero;
-
+    private Vector3 webHandPos;
+    private Quaternion webHandRot = Quaternion.identity;
+    [SerializeField] private GameObject flames;
+    private bool flying = false;
+    private float extraStopTimer = 0f;
+    private float extraStopTime = 2f;
+    private float moveStopTimer = 0f;
+    private float flyStopTimer = 0f;
+    Vector3 flyMoveDirection;
+    Vector3 flyMoveDirection2;
+    private float flyMoveSpeed = 40f;
+    private Vector3 tempExtraStop = Vector3.zero;
+    private Vector3 tempMoveStop = Vector3.zero;
+    private Vector3 tempFlyStop = Vector3.zero;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -112,7 +126,8 @@ public class PlayerController : MonoBehaviour
 
                 float horizontalInput = Input.GetAxis("Horizontal");
                 float verticalInput = Input.GetAxis("Vertical");
-
+                float horizontalInputRaw = Input.GetAxisRaw("Horizontal");
+                float verticalInputRaw = Input.GetAxisRaw("Vertical");
                 //Web key pressed
                 if (Input.GetKeyDown(KeyCode.E))
                 {
@@ -158,12 +173,25 @@ public class PlayerController : MonoBehaviour
                             if (doit)//Vector3.Dot(-currentCollisionNormal, webVector) < 0)
                             {
                                 Debug.Log("2.2");
-
-                                hand.SetParent(camParent);
+                                
                                 hand.localPosition = handRelativePos;
                                 hand.localRotation = handRelativeRot;
+
+                                webHandPos = hand.transform.position - playerCamera.transform.position;
+                                webHandRot = hand.transform.rotation;
+                                /////hand.SetParent(camParent);
+
+                                hand.transform.position = playerCamera.transform.position + webHandPos;
+                                hand.transform.rotation = webHandRot;
+
+                               
                                 //'webbed' is set to true after webbing is stopped by a collision or end of the web journey 
                                 webbed = false;
+                                flyMoveDirection2 = Vector3.zero;
+
+                                flames.SetActive(false);
+
+                                flying = false;
 
                                 mesh.enabled = true;
                                 hand.gameObject.SetActive(true);
@@ -214,16 +242,29 @@ public class PlayerController : MonoBehaviour
                         web.SetActive(false);
 
                         hand.SetParent(playerCamera.transform);
+
                         hand.localPosition = handRelativePos;
                         hand.localRotation = handRelativeRot;
+                        //StartCoroutine(SetHandPos());
                     }
                 }
 
-                //set move direction from inputs
-                moveDirection = (horizontalInput * transform.right) + (verticalInput * transform.forward).normalized;
+                if (!flying)
+                {
+                    //set move direction from inputs
+                    moveDirection = (horizontalInput * transform.right) + (verticalInput * transform.forward).normalized;
 
-                //and keep previous y move amount
-                moveDirection.y = movementDirectionY;
+                    //and keep previous y move amount
+                    moveDirection.y = movementDirectionY;
+                }
+                else
+                {
+                    flyMoveDirection = (horizontalInput * playerCamera.transform.right) + (verticalInput * playerCamera.transform.forward).normalized;
+                    if(horizontalInputRaw != 0 || verticalInputRaw != 0)
+                    {
+                        flyMoveDirection2 = flyMoveDirection;
+                    }
+                }
 
                 //if we are not webbing currently
                 if (!webbing)
@@ -240,24 +281,16 @@ public class PlayerController : MonoBehaviour
                         currentCollision = collision1;
                         currentCollisionNormal = collision1Normal;
 
-                        //I multiplied the moveDirection x and z here individually, as I thought it might multiply the gravity too otherwise
-                        if (Input.GetKeyDown(KeyCode.LeftShift))
-                        {
-                            moveMultiplier *= runMultiplier;
-                        }
-                        if (Input.GetKeyUp(KeyCode.LeftShift))
-                        {
-                            moveMultiplier = 1;
-                        }
-                        moveDirection.x *= moveMultiplier;
-                        moveDirection.z *= moveMultiplier;
-
                         //if we are webbed to building, but trying to move, stop the webbed bool
                         if (horizontalInput != 0 || verticalInput != 0)
                         {
                             webbed = false;
-                            mesh.enabled = false;
-                            hand.gameObject.SetActive(false);
+                            stoppedWeb = false;
+                            if (!flames.activeInHierarchy)
+                            {
+                                mesh.enabled = false;
+                                hand.gameObject.SetActive(false);
+                            }
                         }
 
                         //Jumping
@@ -278,7 +311,7 @@ public class PlayerController : MonoBehaviour
                             hand.position = webDummy.position;
                             hand.rotation = webDummy.rotation;
                         }
-                        
+
                     }
                     else if (!webbed && !stoppedWeb)
                     {
@@ -291,14 +324,51 @@ public class PlayerController : MonoBehaviour
                         moveDirection.x *= moveMultiplier;
                         moveDirection.z *= moveMultiplier;
 
-                        //apply gravity
-                        moveDirection.y -= gravity * Time.deltaTime;
+                        if (!flying)
+                        {
+                            //apply gravity
+                            moveDirection.y -= gravity * Time.deltaTime;
+                        }
 
                         if (extraMovement != Vector3.zero)
                         {
                             //if we have extraMovement (flying with web velocity after stopped webbing mid air), subtract the input keys movement from it, so if player is moving against the extraMovement, the extraMovement won't increase again after stopping inputs.
                             extraMovement.x -= moveDirection.x * Time.deltaTime;
                             extraMovement.z -= moveDirection.z * Time.deltaTime;
+                        }
+                    }
+
+                    if (!webbed && Input.GetKeyDown(KeyCode.Q))
+                    {
+                        if (!flames.activeInHierarchy)
+                        {
+
+                            hand.localPosition = handRelativePos;
+                            hand.localRotation = handRelativeRot;
+                            hand.gameObject.SetActive(true);
+                            mesh.enabled = true;
+                            flames.SetActive(true);
+                        }
+                        else
+                        {
+                            flames.SetActive(false);
+                            mesh.enabled = false;
+                            hand.gameObject.SetActive(false);
+                        }
+                    }
+
+                    if (!webbing && !webbed && Input.GetKeyDown(KeyCode.R))
+                    {
+                        flying = !flying;
+                        if (!flying)
+                        {
+                            extraMovement = flyMoveDirection2 * flyMoveSpeed;
+                            flyMoveDirection2 = Vector3.zero;
+                        }
+                        else
+                        {
+                            tempMoveStop = moveDirection;
+                            tempExtraStop = extraMovement;
                         }
                     }
 
@@ -337,11 +407,15 @@ public class PlayerController : MonoBehaviour
                     //and set the stamina bar to the right length
                     /////staminaImage.sizeDelta = new Vector2(6 * visibleStamina, 20);
                     //move the player, including extraMovement
-                    controller.Move(moveDirection * moveSpeed * Time.deltaTime + extraMovement * Time.deltaTime);
+
+                    controller.Move(moveDirection * moveSpeed * Time.deltaTime + extraMovement * Time.deltaTime + flyMoveDirection2 * flyMoveSpeed * Time.deltaTime);
                 }
                 else
                 {
                     //if we ARE webbing currently
+
+                    hand.transform.position = playerCamera.transform.position + webHandPos;
+                    hand.transform.rotation = webHandRot;
 
                     Debug.Log("webpos = " + webpos);
                     //set the web object position to mid-way, scale to the length of the web vector, and rotation to LookAt the webpos (web destination)
@@ -358,8 +432,8 @@ public class PlayerController : MonoBehaviour
                     {
                         anim.Stop();
                     }
-                        //increase webJourney to 1, so it takes the time to travel length of webVector at webSpeed
-                        webJourney += (Time.deltaTime * webSpeed) / webVector.magnitude;
+                    //increase webJourney to 1, so it takes the time to travel length of webVector at webSpeed
+                    webJourney += (Time.deltaTime * webSpeed) / webVector.magnitude;
                     if (webJourney < 1)
                     {
                         //move the player controller with Lerp, from startPos to the destination
@@ -402,6 +476,45 @@ public class PlayerController : MonoBehaviour
                     }
                 }
 
+                if (flying)
+                {
+                    gravity = 0;
+
+                    if (extraMovement != Vector3.zero)
+                    {
+                        extraStopTimer += Time.deltaTime / extraStopTime;
+                        extraMovement = Vector3.Lerp(tempExtraStop, Vector3.zero, extraStopTimer);
+                    }
+
+                    if (moveDirection != Vector3.zero)
+                    {
+                        moveStopTimer += Time.deltaTime / extraStopTime;
+                        moveDirection = Vector3.Lerp(tempMoveStop, Vector3.zero, moveStopTimer);
+                    }
+
+                    if (horizontalInputRaw == 0 && verticalInputRaw == 0)
+                    {
+                        if (flyMoveDirection2 != Vector3.zero)
+                        {
+                            flyStopTimer += Time.deltaTime / extraStopTime;
+                            flyMoveDirection2 = Vector3.Lerp(tempFlyStop, Vector3.zero, flyStopTimer);
+                        }
+                    }
+                    else
+                    {
+                        tempFlyStop = flyMoveDirection2;
+
+                        flyStopTimer = 0;
+                    }
+                }
+                else
+                {
+                    gravity = 6;
+                    extraStopTimer = 0;
+                    moveStopTimer = 0;
+                    flyStopTimer = 0;
+                }
+
                 #endregion
 
                 #region Rotation
@@ -417,17 +530,27 @@ public class PlayerController : MonoBehaviour
                 #endregion
             }
         }
-        if (levelName != "SuperheroMenu")
+        if (levelName != "MenuScene")
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
+            if (Input.GetKeyDown(KeyCode.Return))
             {
-                //SceneManager.LoadScene("SuperheroMenu");
+                SceneManager.LoadScene("MenuScene");
             }
         }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
+        if (collision.contacts[0].normal.y > 0.3f)
+        {
+            grounded2 = true;
+        }
+
+        if (extraMovement != Vector3.zero)
+        {
+            extraMovement = extraMovement - Vector3.Project(extraMovement, -collision.contacts[0].normal);
+        }
+
         bool doit;
         if (currentCollision)
         {
@@ -466,6 +589,7 @@ public class PlayerController : MonoBehaviour
                 hand.gameObject.SetActive(false);
                 hand.localPosition = handRelativePos;
                 hand.localRotation = handRelativeRot;
+                //StartCoroutine(SetHandPos());
                 controller.transform.position = collision.contacts[0].point + Vector3.up * 1.4f;
             }
         }
@@ -542,11 +666,7 @@ public class PlayerController : MonoBehaviour
         Vector3 handStartPos = hand.position;
         Vector3 handEndPos = webpos;
         Vector3 newNorm = webNorm;
-        /*if (collision != null)
-        {
-            handEndPos = collision.contacts[0].point;//collision.collider.ClosestPoint(hand.position);
-            newNorm = collision.contacts[0].normal;
-        }*/
+     
 
         RaycastHit ray;
         if (Physics.Raycast(playerCamera.transform.position, -newNorm, out ray, 1f, layerMask, QueryTriggerInteraction.Ignore))
@@ -556,13 +676,6 @@ public class PlayerController : MonoBehaviour
             handEndPos = ray.point;
         }
 
-        /*if (collision1 != null)
-        {
-            Debug.Log("1");
-            handEndPos = collision1.ClosestPoint(playerCamera.transform.position);
-        }
-        Debug.Log("1.1");
-        */
         float diffMag = (handEndPos - playerCamera.transform.position).magnitude;
         if (diffMag < 0.6f)
         {
@@ -570,26 +683,10 @@ public class PlayerController : MonoBehaviour
             controller.transform.position = controller.transform.position - (newNorm * (diffMag - 0.6f));
         }
 
-        /*RaycastHit ray;
-        
-        //cast a ray forwards in the camera direction
-        if (Physics.Raycast(playerCamera.transform.position, (handEndPos - playerCamera.transform.position).normalized, out ray, 1000f, layerMask, QueryTriggerInteraction.Ignore))
-        {
-            newNorm = ray.normal;
-        }*/
-
-        //if(diffMag < 0.5f)
-        //{
-        //    controller.transform.position = controller.transform.position - (newNorm * (diffMag - 0.5f));
-        //}
-
         Quaternion handStartRot = hand.rotation;
         webDummy.rotation = Quaternion.FromToRotation(-transform.up, -newNorm);
         webDummy.position = handEndPos;
-        //webDummy.rotation = Quaternion.LookRotation(-webVector, newNorm);
-        //webDummy.up = newNorm;
-        //float angle = Mathf.Acos(Vector3.Dot(-webVector, -handEndRot.)) * Mathf.Rad2Deg;
-        //handEndRot *= Quaternion.Euler(-newNorm * angle);
+
         float angle = Vector3.SignedAngle(-webVector, webDummy.forward, -newNorm);
         webDummy.rotation *= Quaternion.Euler(0, angle, 0);
         handEndRot = webDummy.rotation;
@@ -606,7 +703,6 @@ public class PlayerController : MonoBehaviour
         hand.rotation = handEndRot;
         anim["Armature|palm"].time = anim["Armature|palm"].length;
     }
-
     private void OnCollisionStay(Collision collision)
     {
 
@@ -615,10 +711,9 @@ public class PlayerController : MonoBehaviour
         currentCollision = collision.collider;
         currentCollisionNormal = collision.contacts[0].normal;
         Debug.Log("currentCollision = " + currentCollision.name);
-        grounded2 = collision.contacts[0].normal.y >= 0.5f;
+        
         //Debug.Log("currentCollisionNormal = " + currentCollisionNormal);
     }
-
     private void OnCollisionExit(Collision collision)
     {
         if (currentCollision == collision.collider)
@@ -631,5 +726,12 @@ public class PlayerController : MonoBehaviour
         {
             collision1 = null;
         }*/
+    }
+
+    IEnumerator SetHandPos()
+    {
+        yield return new WaitForNextFrameUnit();
+        hand.localPosition = handRelativePos;
+        hand.localRotation = handRelativeRot;
     }
 }
