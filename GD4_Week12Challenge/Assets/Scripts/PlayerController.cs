@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using Unity.VisualScripting;
 using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
 
 public class PlayerController : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float runMultiplier = 2f;
     [SerializeField] float jumpForce = 2f;
     [SerializeField] float gravity = 6f;
-    public float mouseSensitivity = 700f;
+    public float mouseSensitivity = 200f;
     [SerializeField] float lookXLimit = 85f;
     float rotationX = 0f;
     Vector3 moveDirection;
@@ -83,9 +84,13 @@ public class PlayerController : MonoBehaviour
     private Vector3 tempExtraStop = Vector3.zero;
     private Vector3 tempMoveStop = Vector3.zero;
     private Vector3 tempFlyStop = Vector3.zero;
+    [SerializeField] private UnityEngine.UI.Slider slider;
+    [SerializeField] private TMP_Text mouseText;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        mouseSensitivity = PlayerPrefs.GetFloat("MouseSensitivity", 200f);
+
         lookXLimit = 85f;
         Time.timeScale = 1f;
         /////healthText.text = "Lives: " + health;
@@ -98,13 +103,13 @@ public class PlayerController : MonoBehaviour
         
         if (levelName != "SuperheroMenu")
         {
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
+            UnityEngine.Cursor.visible = false;
+            UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         }
         else
         {
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
+            UnityEngine.Cursor.visible = true;
+            UnityEngine.Cursor.lockState = CursorLockMode.None;
         }
 
         handRelativePos = hand.localPosition;
@@ -128,6 +133,30 @@ public class PlayerController : MonoBehaviour
                 float verticalInput = Input.GetAxis("Vertical");
                 float horizontalInputRaw = Input.GetAxisRaw("Horizontal");
                 float verticalInputRaw = Input.GetAxisRaw("Vertical");
+
+                if (Input.GetKeyDown(KeyCode.P))
+                {
+                    if (Time.timeScale == 1f)
+                    {
+                        Time.timeScale = 0f;
+                        slider.value = mouseSensitivity;
+                        mouseText.text = "MouseSensitivity: " + mouseSensitivity;
+                        mouseText.gameObject.SetActive(true);
+                        slider.gameObject.SetActive(true);
+                        UnityEngine.Cursor.visible = true;
+                        UnityEngine.Cursor.lockState = CursorLockMode.None;
+                    }
+                    else
+                    {
+                        UnityEngine.Cursor.visible = false;
+                        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+                        mouseText.gameObject.SetActive(false);
+                        slider.gameObject.SetActive(false);
+                        PlayerPrefs.SetFloat("MouseSensitivity", mouseSensitivity);
+                        Time.timeScale = 1f;
+                    }
+                }
+
                 //Web key pressed
                 if (Input.GetKeyDown(KeyCode.E))
                 {
@@ -735,5 +764,11 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForNextFrameUnit();
         hand.localPosition = handRelativePos;
         hand.localRotation = handRelativeRot;
+    }
+
+    public void OnSliderChanged()
+    {
+        mouseSensitivity = slider.value;
+        mouseText.text = "MouseSensitivity: " + mouseSensitivity;
     }
 }
