@@ -86,6 +86,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 tempFlyStop = Vector3.zero;
     [SerializeField] private UnityEngine.UI.Slider slider;
     [SerializeField] private TMP_Text mouseText;
+    [SerializeField] private TMP_Text pauseText;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -142,6 +143,7 @@ public class PlayerController : MonoBehaviour
                         slider.value = mouseSensitivity;
                         mouseText.text = "MouseSensitivity: " + mouseSensitivity;
                         mouseText.gameObject.SetActive(true);
+                        pauseText.gameObject.SetActive(true);
                         slider.gameObject.SetActive(true);
                         UnityEngine.Cursor.visible = true;
                         UnityEngine.Cursor.lockState = CursorLockMode.None;
@@ -152,6 +154,7 @@ public class PlayerController : MonoBehaviour
                         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
                         mouseText.gameObject.SetActive(false);
                         slider.gameObject.SetActive(false);
+                        pauseText.gameObject.SetActive(false);
                         PlayerPrefs.SetFloat("MouseSensitivity", mouseSensitivity);
                         Time.timeScale = 1f;
                     }
